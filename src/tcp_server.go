@@ -1,11 +1,11 @@
 package src
 
 import (
-	"net"
-	"fmt"
 	"bufio"
-	"io"
 	"bytes"
+	"fmt"
+	"io"
+	"net"
 	"strconv"
 )
 
@@ -13,7 +13,7 @@ type UpdateCellsFunc func(cellIndex string, count int)
 
 type TcpServer struct {
 	onUpdateCells UpdateCellsFunc
-	cellsArray *CellsArray
+	cellsArray    *CellsArray
 }
 
 func (ts *TcpServer) Start(laddr string, onUpdateCells UpdateCellsFunc) {
@@ -23,7 +23,7 @@ func (ts *TcpServer) Start(laddr string, onUpdateCells UpdateCellsFunc) {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			fmt.Println("Error while accepting the TCP connection: " + err.Error())
+			fmt.Println("Error while accepting a TCP connection: " + err.Error())
 		} else {
 			go ts.handleClient(conn)
 		}
@@ -56,5 +56,4 @@ func (ts *TcpServer) handleClientData(data []byte) {
 		return
 	}
 	ts.onUpdateCells(string(packed[0]), count)
-	fmt.Println("Got data: " + string(data))
 }

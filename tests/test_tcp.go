@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net"
 	"bufio"
-	"os"
 	"fmt"
+	"net"
+	"os"
 )
 
 func main() {
@@ -16,5 +16,3 @@ func main() {
 		fmt.Fprintf(conn, text)
 	}
 }
-
-

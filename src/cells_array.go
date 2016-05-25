@@ -1,9 +1,9 @@
 package src
 
 import (
-	"sync"
-	"math/big"
 	"fmt"
+	"math/big"
+	"sync"
 )
 
 const (
@@ -11,9 +11,9 @@ const (
 )
 
 type CellsArray struct {
-	cellsLock sync.Mutex
-	indexLock sync.RWMutex
-	cells map[string]int
+	cellsLock        sync.Mutex
+	indexLock        sync.RWMutex
+	cells            map[string]int
 	largestCellIndex string
 }
 
@@ -26,6 +26,16 @@ func (ca *CellsArray) updateLargestCellIndex() {
 	for key, value := range ca.cells {
 		if ca.cells[ca.largestCellIndex] < value {
 			ca.largestCellIndex = key
+		} else if ca.cells[ca.largestCellIndex] == value {
+			largestIndex := big.Int{}
+			keyIndex := big.Int{}
+
+			largestIndex.SetString(ca.largestCellIndex, 10)
+			keyIndex.SetString(key, 10)
+
+			if largestIndex.Cmp(&keyIndex) == 1 {
+				ca.largestCellIndex = key
+			}
 		}
 	}
 }
@@ -33,10 +43,10 @@ func (ca *CellsArray) updateLargestCellIndex() {
 func (ca *CellsArray) UpdateCell(cellIndex string, value int) {
 	index := big.Int{}
 	_, ok := index.SetString(cellIndex, 10)
-	strIndex := index.String()
 	if !ok {
 		return
 	}
+	strIndex := index.String()
 	ca.cellsLock.Lock()
 	if _, ok := ca.cells[strIndex]; ok {
 		ca.cells[strIndex] += value
@@ -44,7 +54,6 @@ func (ca *CellsArray) UpdateCell(cellIndex string, value int) {
 			ca.cells[strIndex] = 0
 		}
 	} else {
-		fmt.Println("Index: ", strIndex)
 		ca.cells[strIndex] = value
 	}
 	ca.cellsLock.Unlock()
@@ -63,4 +72,13 @@ func (ca *CellsArray) GetLargestCellIndex() string {
 	defer ca.indexLock.Unlock()
 
 	return ca.largestCellIndex
+}
+
+func (ca *CellsArray) DumpCells() {
+	ca.cellsLock.Lock()
+	defer ca.cellsLock.Unlock()
+
+	for key, value := range ca.cells {
+		fmt.Println(key, ":\t", value)
+	}
 }
