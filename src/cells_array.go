@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	maxBallsInCell = 50000
+	MAX_BALLS_IN_CELL = 50000
 )
 
 type CellsArray struct {
@@ -50,7 +50,7 @@ func (ca *CellsArray) UpdateCell(cellIndex string, value int) {
 	ca.cellsLock.Lock()
 	if _, ok := ca.cells[strIndex]; ok {
 		ca.cells[strIndex] += value
-		if ca.cells[strIndex] > maxBallsInCell {
+		if ca.cells[strIndex] > MAX_BALLS_IN_CELL {
 			ca.cells[strIndex] = 0
 		}
 	} else {

@@ -2,22 +2,20 @@ package src
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"net"
-	"strconv"
 )
 
-type UpdateCellsFunc func(cellIndex string, count int)
+type TcpReceiveFunc func(data []byte)
 
 type TcpServer struct {
-	onUpdateCells UpdateCellsFunc
-	cellsArray    *CellsArray
+	onTcpReceive TcpReceiveFunc
+	cellsArray   *CellsArray
 }
 
-func (ts *TcpServer) Start(laddr string, onUpdateCells UpdateCellsFunc) {
-	ts.onUpdateCells = onUpdateCells
+func (ts *TcpServer) Start(laddr string, onTcpReceive TcpReceiveFunc) {
+	ts.onTcpReceive = onTcpReceive
 
 	listener, _ := net.Listen("tcp", laddr)
 	for {
@@ -41,19 +39,6 @@ func (ts *TcpServer) handleClient(conn net.Conn) {
 			fmt.Println("Got error: " + err.Error())
 			return
 		}
-		ts.handleClientData(data)
+		ts.onTcpReceive(data)
 	}
-}
-
-func (ts *TcpServer) handleClientData(data []byte) {
-	packed := bytes.Split(data, []byte(" "))
-	if len(packed) != 2 {
-		return
-	}
-
-	count, err := strconv.Atoi(string(packed[1]))
-	if err != nil {
-		return
-	}
-	ts.onUpdateCells(string(packed[0]), count)
 }
