@@ -29,6 +29,7 @@ func (ts *TcpServer) Start(laddr string, onTcpReceive TcpReceiveFunc) {
 }
 
 func (ts *TcpServer) handleClient(conn net.Conn) {
+	defer conn.Close()
 	br := bufio.NewReader(conn)
 	for {
 		data, _, err := br.ReadLine()
