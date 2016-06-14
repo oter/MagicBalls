@@ -9,6 +9,7 @@ import (
 
 func main() {
 	conn, _ := net.Dial("tcp", "127.0.0.1:9000")
+	defer conn.Close()
 	for {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("Text to send: ")
